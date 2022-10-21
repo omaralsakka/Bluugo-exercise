@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Bluugo Oy Search Engine</title>
+		<link rel="stylesheet" href="{% static 'style.css' %}" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Akshar&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<div class="content">
+		<nav class="nav-bar">
+			<a target="_blank" href="/">
+				<img class="logo" src="{% static 'logo.png' %}" />
+			</a>
+		</nav>
+		<div class="row-container">
+			<div class="top-items-container">
+				<div class="row-title">
+					<h1>Upload material</h1>
+				</div>
+				<div class="upload-container">
+					<p>Upload updated material:</p>
+					<div class="action-btn-container">
+						<form enctype="multipart/form-data" method="post" action="/">
+							{% csrf_token %}
+							<input type="submit" class="upload-btn" value="Add Data">upload</input>
+							{{ form }}
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row-container">
+			<div class="row-title">
+				<h1>Vehicle data</h1>
+			</div>
+			<div class="search-input-container">
+				<input class="search-input" type="search" placeholder="Search..." />
+			</div>
+		</div>
+
+		<table >
+			<tr>
+				<th>Model Year</th>
+				<th>Make</th>
+				<th>Model</th>
+				<th>Rejection Percentage</th>
+				<th>Reason 1</th>
+				<th>Reason 2</th>
+				<th>Reason 3</th>
+			</tr>
+			{% for instance in fileJs %}
+			<tr>
+				<td>
+					{{ instance.fields.model_year }}
+				</td>
+				<td>
+					{{ instance.fields.make }}
+				</td>
+				<td>
+					{{ instance.fields.model }}
+				</td>
+				<td>
+					{{ instance.fields.rejection_percentage }}
+				</td>
+				<td>
+					{{ instance.fields.reason_1 }}
+				</td>
+				<td>
+					{{ instance.fields.reason_2 }}
+				</td>
+				<td>
+					{{ instance.fields.reason_3 }}
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+		<footer>
+			<hr />
+			<i>© Omar Abdelfattah Bluugo Oy 2022 </i>
+		</footer>
+	</body>
+</html>
