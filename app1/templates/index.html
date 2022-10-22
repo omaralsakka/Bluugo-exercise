@@ -14,77 +14,136 @@
 	</head>
 	<body>
 		<div class="content">
-		<nav class="nav-bar">
-			<a target="_blank" href="/">
-				<img class="logo" src="{% static 'logo.png' %}" />
-			</a>
-		</nav>
-		<div class="row-container">
-			<div class="top-items-container">
-				<div class="row-title">
-					<h1>Upload material</h1>
-				</div>
-				<div class="upload-container">
-					<p>Upload updated material:</p>
-					<div class="action-btn-container">
-						<form enctype="multipart/form-data" method="post" action="/">
-							{% csrf_token %}
-							<input type="submit" class="upload-btn" value="Add Data">upload</input>
-							{{ form }}
-						</form>
+			<nav class="nav-bar">
+				<a target="_blank" href="/">
+					<img class="logo" src="{% static 'logo.png' %}" />
+				</a>
+			</nav>
+			<div class="row-container">
+				<div class="top-items-container">
+					<div class="row-title">
+						<h1>Upload material</h1>
+					</div>
+					<div class="upload-container">
+						<p>Upload updated material:</p>
+						<div class="action-btn-container">
+							<form enctype="multipart/form-data" method="post" action="/">
+								{% csrf_token %}
+								<input
+									type="submit"
+									class="upload-btn"
+									value="Add Data"
+								/>upload {{ form }}
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row-container">
-			<div class="row-title">
-				<h1>Vehicle data</h1>
+			<div class="row-container">
+				<div class="row-title">
+					<h1>Vehicle data</h1>
+				</div>
+				<div class="search-input-container">
+					<input
+						id="search"
+						class="search-input"
+						type="search"
+						placeholder="Search..."
+					/>
+				</div>
 			</div>
-			<div class="search-input-container">
-				<input class="search-input" type="search" placeholder="Search..." />
-			</div>
-		</div>
 
-		<table >
-			<tr>
-				<th>Model Year</th>
-				<th>Make</th>
-				<th>Model</th>
-				<th>Rejection Percentage</th>
-				<th>Reason 1</th>
-				<th>Reason 2</th>
-				<th>Reason 3</th>
-			</tr>
-			{% for instance in fileJs %}
-			<tr>
-				<td>
-					{{ instance.fields.model_year }}
-				</td>
-				<td>
-					{{ instance.fields.make }}
-				</td>
-				<td>
-					{{ instance.fields.model }}
-				</td>
-				<td>
-					{{ instance.fields.rejection_percentage }}
-				</td>
-				<td>
-					{{ instance.fields.reason_1 }}
-				</td>
-				<td>
-					{{ instance.fields.reason_2 }}
-				</td>
-				<td>
-					{{ instance.fields.reason_3 }}
-				</td>
-			</tr>
-			{% endfor %}
-		</table>
-	</div>
+			<table>
+				<tr>
+					<th>Model Year</th>
+					<th>Make</th>
+					<th>Model</th>
+					<th>Rejection Percentage</th>
+					<th>Reason 1</th>
+					<th>Reason 2</th>
+					<th>Reason 3</th>
+				</tr>
+				<tbody id="tableBody"></tbody>
+			</table>
+		</div>
 		<footer>
 			<hr />
 			<i>© Omar Abdelfattah Bluugo Oy 2022 </i>
 		</footer>
 	</body>
 </html>
+<script>
+	let resp = '{{fileJs}}';
+	let cars = JSON.parse(resp.replace(/&#x27;/g, '"'));
+	let search = document.getElementById('search');
+	let carsList;
+	let filteredArray = [];
+	let tableBody = document.getElementById('tableBody');
+	let initCars = [...cars];
+	initCars.splice(50);
+	initCars.map((car) => {
+		tableBody.innerHTML += `
+				<tr>
+					<td>${car.fields.model_year}</td>
+					<td>${car.fields.make}</td>
+					<td>${car.fields.model}</td>
+					<td>${car.fields.rejection_percentage}</td>
+					<td>${car.fields.reason_1}</td>
+					<td>${car.fields.reason_2}</td>
+					<td>${car.fields.reason_3}</td>
+				</tr>
+			`;
+	});
+	search.addEventListener('keyup', (e) => {
+		tableBody.innerHTML = '';
+		let entry = e.target.value.toLowerCase();
+		let searchArr = [];
+		if (entry.trim().indexOf(' ') != -1) {
+			searchArr = entry.trim().split(/\s+/);
+		}
+		if (searchArr.length) {
+			filteredArray = cars.filter(
+				(car) =>
+					car.fields.make.toLowerCase().includes(searchArr[0]) ||
+					car.fields.model.toLowerCase().includes(searchArr[0])
+			);
+			if (filteredArray.length > 0) {
+				let newSearch = [...searchArr];
+				let tempArr = [...filteredArray];
+				newSearch.shift();
+				filteredArray = tempArr.filter((car) =>
+					newSearch.some(
+						(elem) =>
+							car.fields.model.toLowerCase().includes(elem) ||
+							car.fields.make.toLowerCase().includes(elem)
+					)
+				);
+			}
+		} else {
+			filteredArray = cars.filter(
+				(car) =>
+					car.fields.make.toLowerCase().includes(entry.trim()) ||
+					car.fields.model.toLowerCase().includes(entry.trim())
+			);
+		}
+
+		if (filteredArray.length > 0) {
+			filteredArray.splice(50);
+			filteredArray.map((car) => {
+				tableBody.innerHTML += `
+				<tr>
+					<td>${car.fields.model_year}</td>
+					<td>${car.fields.make}</td>
+					<td>${car.fields.model}</td>
+					<td>${car.fields.rejection_percentage}</td>
+					<td>${car.fields.reason_1}</td>
+					<td>${car.fields.reason_2}</td>
+					<td>${car.fields.reason_3}</td>
+				</tr>
+			`;
+			});
+		} else {
+			tableBody.innerHTML = '<h3>No data found</h3>';
+		}
+	});
+</script>
