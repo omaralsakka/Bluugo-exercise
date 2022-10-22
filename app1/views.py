@@ -27,6 +27,4 @@ def index(request):
 	else:
 		form = FileForm()
 	fileJs = serializers.serialize("python", CarModel.objects.all())
-	allData = CarModel.objects.all()
-	allData.delete()
 	return render(request, 'index.html', {'form': form, 'fileJs': fileJs})
