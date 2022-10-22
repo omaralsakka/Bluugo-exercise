@@ -1,9 +1,16 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<title>Bluugo Oy Search Engine</title>
+
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{% static 'home/css/bootstrap.css' %}"
+		/>
 		<link rel="stylesheet" href="{% static 'style.css' %}" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,63 +19,100 @@
 			rel="stylesheet"
 		/>
 	</head>
+	<style></style>
 	<body>
 		<div class="content">
-			<nav class="nav-bar">
-				<a target="_blank" href="/">
-					<img class="logo" src="{% static 'logo.png' %}" />
-				</a>
+			<nav class="navbar navbar-dark shadow-lg p-2 mb-5 rounded">
+				<div class="container-fluid mx-4 p-1">
+					<a class="navbar-brand" target="_blank" href="/">
+						<img
+							class="d-inline-block align-top"
+							width="70"
+							src="{% static 'logo_white.png' %}"
+							alt="Bluugo logo"
+						/>
+					</a>
+					<div
+						id="loadingSpinner"
+						class="spinner-border text-primary"
+						role="status"
+						style="display: none"
+					>
+						<span class="sr-only">Loading...</span>
+					</div>
+				</div>
 			</nav>
-			<div class="row-container">
-				<div class="top-items-container">
-					<div class="row-title">
-						<h1>Upload material</h1>
+			<div class="container-fluid p-3">
+				<div
+					class="container-fluid d-flex flex-column justify-content-center align-items-center mb-5"
+				>
+					<h1 class="display-2 titles-font komu-font">
+						Upload <span class="blue-font">Material</span>
+					</h1>
+					<div class="d-flex p-3">
+						<form
+							enctype="multipart/form-data"
+							method="post"
+							action="/"
+							onsubmit="loaderFunction()"
+						>
+							{% csrf_token %}
+							<input
+								type="submit"
+								class="btn btn-outline-primary"
+								value="Add Data"
+								id="addDataBtn"
+							/>
+							<div class="fileUpload btn btn-outline-secondary">
+								<span>Select File</span>
+								{{ form }}
+							</div>
+						</form>
 					</div>
-					<div class="upload-container">
-						<p>Upload updated material:</p>
-						<div class="action-btn-container">
-							<form enctype="multipart/form-data" method="post" action="/">
-								{% csrf_token %}
-								<input
-									type="submit"
-									class="upload-btn"
-									value="Add Data"
-								/>upload {{ form }}
-							</form>
-						</div>
-					</div>
 				</div>
-			</div>
-			<div class="row-container">
-				<div class="row-title">
-					<h1>Vehicle data</h1>
-				</div>
-				<div class="search-input-container">
-					<input
-						id="search"
-						class="search-input"
-						type="search"
-						placeholder="Search..."
-					/>
-				</div>
-			</div>
 
-			<table>
-				<tr>
-					<th>Model Year</th>
-					<th>Make</th>
-					<th>Model</th>
-					<th>Rejection Percentage</th>
-					<th>Reason 1</th>
-					<th>Reason 2</th>
-					<th>Reason 3</th>
-				</tr>
-				<tbody id="tableBody"></tbody>
-			</table>
+				<div class="container-fluid mb-4">
+					<div class="container w-100 d-flex justify-content-center">
+						<h1 class="display-2 titles-font komu-font">
+							Vehicle <span class="blue-font">Data</span>
+						</h1>
+					</div>
+					<div class="input-group w-50 m-auto">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Car name and/or car model</span>
+						</div>
+						<input
+							id="search"
+							class="form-control"
+							aria-label="Car name and car model"
+							type="search"
+							placeholder="Search..."
+						/>
+					</div>
+				</div>
+				<div>
+					<table class="table table-bordered table-striped table-dark">
+						<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Model Year</th>
+								<th scope="col">Make</th>
+								<th scope="col">Model</th>
+								<th scope="col">Rejection Percentage</th>
+								<th scope="col">Reason 1</th>
+								<th scope="col">Reason 2</th>
+								<th scope="col">Reason 3</th>
+							</tr>
+						</thead>
+						<tbody id="tableBody"></tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 		<footer>
 			<hr />
 			<i>© Omar Abdelfattah Bluugo Oy 2022 </i>
+			<a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>
 		</footer>
 	</body>
 </html>
@@ -78,13 +122,19 @@
 	let search = document.getElementById('search');
 	let filteredArray = [];
 	let tableBody = document.getElementById('tableBody');
-	let initCars = [...cars];
+	let loadingSpinner = document.getElementById('loadingSpinner');
 
+	let initCars = [...cars];
+	if (window.history.replaceState) {
+		window.history.replaceState(null, null, window.location.href);
+	}
 	const createTable = (cars, tableBody) => {
+		let i = 1;
 		cars.splice(50);
 		cars.map((car) => {
 			tableBody.innerHTML += `
-				<tr>
+				<tr scope="row">
+					<td>${i++}</td>
 					<td>${car.fields.model_year}</td>
 					<td>${car.fields.make}</td>
 					<td>${car.fields.model}</td>
@@ -97,7 +147,12 @@
 		});
 	};
 
+	const loaderFunction = () => {
+		loadingSpinner.style.display = 'block';
+		document.getElementById('addDataBtn').setAttribute('disabled', 'disabled');
+	};
 	createTable(initCars, tableBody);
+
 	search.addEventListener('keyup', (e) => {
 		tableBody.innerHTML = '';
 		let entry = e.target.value.toLowerCase();
