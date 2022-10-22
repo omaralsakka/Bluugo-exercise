@@ -21,7 +21,7 @@
 	</head>
 	<style></style>
 	<body>
-		<div class="content">
+		<div class="container-fluid content">
 			<nav class="navbar navbar-dark shadow-lg p-2 mb-5 rounded">
 				<div class="container-fluid mx-4 p-1">
 					<a class="navbar-brand" target="_blank" href="/">
@@ -77,9 +77,9 @@
 							Vehicle <span class="blue-font">Data</span>
 						</h1>
 					</div>
-					<div class="input-group w-50 m-auto">
+					<div id="search-container" class="input-group w-50 m-auto">
 						<div class="input-group-prepend">
-							<span class="input-group-text">Car name and/or car model</span>
+							<span class="input-group-text">Brand name and/or car model</span>
 						</div>
 						<input
 							id="search"
@@ -89,8 +89,13 @@
 							placeholder="Search..."
 						/>
 					</div>
+					<div id="infoText" class="mt-3">
+						<h3 class="text-center">
+							Please upload some data files to display cars informations
+						</h3>
+					</div>
 				</div>
-				<div>
+				<div id="table-container">
 					<table class="table table-bordered table-striped table-dark">
 						<thead>
 							<tr>
@@ -109,9 +114,10 @@
 				</div>
 			</div>
 		</div>
-		<footer>
-			<hr />
-			<i>© Omar Abdelfattah Bluugo Oy 2022 </i>
+		<footer
+			class="container-fluid page-footer d-flex align-items-center flex-column"
+		>
+			<i>© Omar Abdelfattah Bluugo Oy 2022</i>
 			<a href="http://www.onlinewebfonts.com">oNline Web Fonts</a>
 		</footer>
 	</body>
@@ -122,12 +128,12 @@
 	let search = document.getElementById('search');
 	let filteredArray = [];
 	let tableBody = document.getElementById('tableBody');
-	let loadingSpinner = document.getElementById('loadingSpinner');
 
 	let initCars = [...cars];
 	if (window.history.replaceState) {
 		window.history.replaceState(null, null, window.location.href);
 	}
+
 	const createTable = (cars, tableBody) => {
 		let i = 1;
 		cars.splice(50);
@@ -148,9 +154,10 @@
 	};
 
 	const loaderFunction = () => {
-		loadingSpinner.style.display = 'block';
+		document.getElementById('loadingSpinner').style.display = 'block';
 		document.getElementById('addDataBtn').setAttribute('disabled', 'disabled');
 	};
+
 	createTable(initCars, tableBody);
 
 	search.addEventListener('keyup', (e) => {
@@ -191,4 +198,12 @@
 			tableBody.innerHTML = '<h3>No data found</h3>';
 		}
 	});
+	if (tableBody.children.length > 0) {
+		document.getElementById('table-container').style.display = 'block';
+		document.getElementById('search-container').style.display = 'flex';
+		document.getElementById('infoText').style.display = 'none';
+	} else {
+		document.getElementById('table-container').style.display = 'none';
+		document.getElementById('search-container').style.display = 'none';
+	}
 </script>
