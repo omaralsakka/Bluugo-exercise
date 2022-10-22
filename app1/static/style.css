@@ -29,6 +29,15 @@ body {
 	animation-delay: 2s;
 }
 
+.tableBody {
+	transition: 0.3s;
+}
+
+.tableBody:hover {
+	box-shadow: 0 20px 30px rgba(0, 0, 0, 0.8);
+	transform: translateY(-7px);
+}
+
 @keyframes fadeIn {
 	from {
 		opacity: 0;
