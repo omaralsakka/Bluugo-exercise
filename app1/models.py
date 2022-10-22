@@ -3,7 +3,6 @@ from django.db import models
 class File(models.Model):
 	file = models.FileField(upload_to='uploads/')
 
-# Create your models here.
 class CarModel(models.Model):
 	model_year = models.CharField(max_length=300)
 	make = models.CharField(max_length=300)
