@@ -1,3 +1,4 @@
+from pickle import FALSE
 from .models import CarModel
 
 def getCar(make, model, year):
@@ -13,3 +14,21 @@ def updateCar(car,instance):
 	car.update(reason_2=instance['reason_2'])
 	car.update(reason_3=instance['reason_3'])
 	return
+
+def validateInputs(instance):
+	if 'model_year' not in instance:
+		return False
+	elif 'make' not in instance:
+		return False
+	elif 'model' not in instance:
+		return False
+	elif 'rejection_percentage' not in instance:
+		return False
+	elif 'reason_1' not in instance:
+		return False
+	elif 'reason_2' not in instance:
+		return False
+	elif 'reason_3' not in instance:
+		return False
+	else:
+		return True
