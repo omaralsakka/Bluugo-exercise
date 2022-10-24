@@ -13,6 +13,11 @@ The project had to be written in ```Django```.
 - If the car is data is totally new, a new data saved in ```SQL Light``` <strong>database</strong> 
 - If the car exist in the <strong>database</strong>, the car data will be updated only
 
+## :warning: **Prerequisites:**
+
+- ```python3```
+- For deployment: ```django_on_heroku``` - ```gunicorn```
+
 ## :green_square: Run
 
 - ```git clone ```
